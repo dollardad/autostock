@@ -76,7 +76,7 @@ class Car_Post_Type {
 		add_meta_box(
 			'stock_number_meta_box',
 			__( 'Vehicle Details', AUTO ),
-			array( $this, 'render_stock_number_meta_box'),
+			array( $this, 'render_vehicle_details_meta_box'),
 			'cars',
 			'car_meta_box_position',
 			'high'
@@ -84,6 +84,9 @@ class Car_Post_Type {
 
 	}
 
+	/**
+	 * Function to reorder car post types' meta boxes
+	 */
 	public function reorder_meta_box() {
 
 		global $post, $wp_meta_boxes;
@@ -92,6 +95,14 @@ class Car_Post_Type {
 		unset( $wp_meta_boxes['cars']['car_meta_box_position'] );
 	}
 
+	/**
+	 * Function to change some of the default text in the custom post type admin edit screen
+	 *
+	 * @param $translation
+	 * @param null $original
+	 *
+	 * @return string|void
+	 */
 	public function change_text( $translation, $original = null ) {
 
 		if ( 'Author' == $translation) {
@@ -109,7 +120,12 @@ class Car_Post_Type {
 		return $translation;
 	}
 
-	public function render_stock_number_meta_box( $post ) {
+	/**
+	 * Callback function to render meta box for vehicle details.
+	 * 
+	 * @param $post
+	 */
+	public function render_vehicle_details_meta_box( $post ) {
 
 		echo '<p>' . __('Enter a unique stock number for this vehicle', AUTO) . '</p>';
 		echo '<input type="text" id="stock_no" name="stock_number">';
