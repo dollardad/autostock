@@ -1,4 +1,4 @@
 autostock
 =========
 
-WordPress Automoblile Dealer Plugin
+WordPress Car Dealer's Plugin
