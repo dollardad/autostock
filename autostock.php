@@ -1,15 +1,15 @@
 <?php
-/**
- * Plugin Name: Autostock
- * Plugin URI: http://kevinphillips.co.nz
- * Description: Car dealer stock management plugin for WordPress.
- * Version: 1.0.0
- * Author: Kevin Phillips
- * Author URI: http://kevinphillips.co.nz
- * Text Domain: autostock
- * Domain Path: locale
- * license: GPL2
- */
+	/**
+	 * Plugin Name: Autostock
+	 * Plugin URI: http://kevinphillips.co.nz
+	 * Description: Car dealer stock management plugin for WordPress.
+	 * Version: 1.0.0
+	 * Author: Kevin Phillips
+	 * Author URI: http://kevinphillips.co.nz
+	 * Text Domain: autostock
+	 * Domain Path: locale
+	 * license: GPL2
+	 */
 
 /*  Copyright 2015  Kevin Phillips  (email : kevin@kevinphillips.co.nz)
 
@@ -26,4 +26,15 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+namespace Autostock;
+use Autostock;
+
+// Plugin definitions.
+define( 'AUTO', 'autostock' );
+
+// include files
+function load_includes() {
+    include 'includes/Car_Post_Type.php';
+}
+add_action( 'init', __NAMESPACE__ .'\load_includes' );
 
