@@ -17,7 +17,9 @@ class Car_Post_Type {
 	public function __construct() {
 		$this->register_post_type();
 		add_filter( 'enter_title_here', array( $this, 'change_title_input' ) );
+		add_action( 'edit_form_after_title', array( $this, 'reorder_meta_box' ) );
 		add_action( 'admin_head', array( $this, 'remove_media_button' ) );
+		add_filter( 'gettext', array( $this, 'change_text' ) );
 	}
 
 	/**
@@ -52,10 +54,10 @@ class Car_Post_Type {
 			'show_in_nav_menus'    => true,
 			'show_in_menu'         => true,
 			'show_in_admin_bar'    => true,
-			'menu_position'        => 1,
+			'menu_position'        => 2,
 			'menu_icon'            => 'dashicons-backup',
 			'hierarchical'         => false,
-			'supports'             => array( 'title', 'editor', 'author', 'excerpt' ),
+			'supports'             => array( 'title', 'author', 'excerpt', 'editor' ),
 			'register_meta_box_cb' => array( $this, 'register_meta_box' ),
 			'has_archive'          => true,
 		);
@@ -63,8 +65,59 @@ class Car_Post_Type {
 		register_post_type( 'Cars', $args );
 	}
 
-	public function register_meta_box( $post ) {
-		// Meta box registration will go here
+	/**
+	 * callback function for register_post_type to generate
+	 * meta boxes for cars post type.
+	 *
+	 * @param $post
+	 */
+	public function register_meta_box() {
+
+		add_meta_box(
+			'stock_number_meta_box',
+			__( 'Vehicle Details', AUTO ),
+			array( $this, 'render_stock_number_meta_box'),
+			'cars',
+			'car_meta_box_position',
+			'high'
+		);
+
+	}
+
+	public function reorder_meta_box() {
+
+		global $post, $wp_meta_boxes;
+		do_meta_boxes( get_current_screen(), 'car_meta_box_position', $post );
+
+		unset( $wp_meta_boxes['cars']['car_meta_box_position'] );
+	}
+
+	public function change_text( $translation, $original = null ) {
+
+		if ( 'Author' == $translation) {
+			return __( 'Sales Person' );
+		}
+
+		if ( 'Excerpt' == $translation ) {
+			return __('Short Description', AUTO );
+		}else{
+			$pos = strpos($translation, 'Excerpts are optional hand-crafted summaries of your');
+			if ($pos !== false) {
+				return  __( 'Short Descriptions are powerful SEO elements.', AUTO );
+			}
+		}
+		return $translation;
+	}
+
+	public function render_stock_number_meta_box( $post ) {
+
+		echo '<p>' . __('Enter a unique stock number for this vehicle', AUTO) . '</p>';
+		echo '<input type="text" id="stock_no" name="stock_number">';
+		echo '<p>' . __('Enter the VIN for this vehicle', AUTO) . '</p>';
+		echo '<input type="text" id="vin" name="vin">';
+		echo '<p>' . __('Enter the chassis number for this vehicle', AUTO) . '</p>';
+		echo '<input type="text" id="chassis" name="chassis">';
+
 
 	}
 
