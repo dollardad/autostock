@@ -122,7 +122,7 @@ class Car_Post_Type {
 
 	/**
 	 * Callback function to render meta box for vehicle details.
-	 * 
+	 *
 	 * @param $post
 	 */
 	public function render_vehicle_details_meta_box( $post ) {
@@ -162,7 +162,7 @@ class Car_Post_Type {
 	public function remove_media_button() {
 		global $post;
 
-		if ( 'cars' == $post->post_type ) {
+		if ( isset($post ) && 'cars' == $post->post_type ) {
 			remove_action( 'media_buttons', 'media_buttons' );
 		}
 	}
