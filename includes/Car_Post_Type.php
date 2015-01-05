@@ -20,6 +20,7 @@ class Car_Post_Type {
 		add_action( 'edit_form_after_title', array( $this, 'reorder_meta_box' ) );
 		add_action( 'admin_head', array( $this, 'remove_media_button' ) );
 		add_filter( 'gettext', array( $this, 'change_text' ) );
+		add_action( 'save_post', array( $this, 'vehicle_details_save_meta_box' ) );
 	}
 
 	/**
@@ -128,15 +129,67 @@ class Car_Post_Type {
 	 */
 	public function render_vehicle_details_meta_box( $post ) {
 
-		echo '<p>' . __('Enter a unique stock number for this vehicle', AUTO) . '</p>';
-		echo '<input type="text" id="stock_no" name="stock_number">';
-		echo '<p>' . __('Enter the VIN for this vehicle', AUTO) . '</p>';
-		echo '<input type="text" id="vin" name="vin">';
-		echo '<p>' . __('Enter the chassis number for this vehicle', AUTO) . '</p>';
-		echo '<input type="text" id="chassis" name="chassis">';
+		wp_nonce_field( 'vehicle_details_meta_box', 'vehicle_details_nonce' );
 
+		
+		$value = get_post_meta( $post->ID, '_vehicle_details', true );
+		
+		echo '<p>' . __('Enter a unique stock number for this vehicle', AUTO) . '</p>';
+		$stock_no = isset( $value['stock_no'] ) ? esc_attr( $value['stock_no']) : '';
+		echo '<input type="text" id="stock_no" name="stock_no" value="' . $stock_no . '">';
+
+		echo '<p>' . __('Enter the VIN for this vehicle', AUTO) . '</p>';
+		$vin = isset( $value['vin'] ) ? esc_attr( $value['vin']) : '';
+		echo '<input type="text" id="vin" name="vin" value="'. $vin .'">';
+
+		echo '<p>' . __('Enter the chassis number for this vehicle', AUTO) . '</p>';
+		$chassis = isset( $value['chassis'] ) ? esc_attr( $value['chassis']) : '';
+		echo '<input type="text" id="chassis" name="chassis" value="'. $chassis .'">';
 
 	}
+
+
+
+	public function vehicle_details_save_meta_box( $post_id ) {
+
+		// Check nonce is set
+		if ( ! isset( $_POST['vehicle_details_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonce
+		if ( ! wp_verify_nonce( $_POST['vehicle_details_nonce'], 'vehicle_details_meta_box' ) ) {
+			return;
+		}
+
+		// Check that this is not an autosave.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		// Check user has permission to edit or create a car type
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		// Should be safe to save the post meta.
+		// TODO probably a good idea to create some options as set fields compulsory.
+
+		// Sanitize data and put into an array.
+		$data = array();
+
+		$data['stock_no'] = sanitize_text_field( $_POST['stock_no'] );
+		$data['vin'] = sanitize_text_field( $_POST['vin'] );
+
+		$data['chassis'] = sanitize_text_field( $_POST['chassis'] );
+		
+		// if the data array is not empty then save the meta data array.
+		if ( ! empty( $data ) ) {
+			update_post_meta( $post_id, '_vehicle_details', $data );
+		}
+
+	}
+
 
 	public function register_taxonomies() {
 
