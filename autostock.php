@@ -31,6 +31,19 @@ use Autostock;
 
 // Plugin definitions.
 define( 'AUTO', 'autostock' );
+define( 'PHP_MIN_VERSION', '5.3.6' );
+
+/**
+ * Before we allow this plugin to be activated we must test the php version against the minimum requirements
+ */
+function autostock_activation() {
+
+    if (version_compare(  PHP_MIN_VERSION, PHP_VERSION ) >= 0) {
+        wp_die('Sorry your php version is ' . PHP_VERSION . ' and you need a minimum of ' . PHP_MIN_VERSION );
+    }
+
+}
+register_activation_hook(__FILE__, __NAMESPACE__ . '\autostock_activation' );
 
 // include files
 function load_includes() {

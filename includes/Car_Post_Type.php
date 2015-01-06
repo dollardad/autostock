@@ -11,10 +11,12 @@ class Car_Post_Type {
 
 	private $screen;
 
+
 	/**
 	 * Construct function for car post types.
 	 */
 	public function __construct() {
+
 		$this->register_post_type();
 		add_filter( 'enter_title_here', array( $this, 'change_title_input' ) );
 		add_action( 'edit_form_after_title', array( $this, 'reorder_meta_box' ) );
@@ -149,7 +151,10 @@ class Car_Post_Type {
 	}
 
 
-
+	/**
+	 * WordPress hook add_action on save post.
+	 * @param $post_id
+	 */
 	public function vehicle_details_save_meta_box( $post_id ) {
 
 		// Check nonce is set
