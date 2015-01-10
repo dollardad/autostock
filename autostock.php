@@ -48,6 +48,10 @@ register_activation_hook(__FILE__, __NAMESPACE__ . '\autostock_activation' );
 // include files
 function load_includes() {
     include 'includes/Car_Post_Type.php';
+
+    // includes for admin pages only
+    if ( is_admin() ) {
+        include 'includes/admin_settings.php';
+    }
 }
 add_action( 'init', __NAMESPACE__ .'\load_includes' );
-

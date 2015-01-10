@@ -231,4 +231,4 @@ class Car_Post_Type {
 
 }
 
-new Car_Post_Type();
+new Car_Post_type();
