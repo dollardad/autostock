@@ -71,9 +71,6 @@ class Car_Post_Type {
 	/**
 	 * callback function for register_post_type to generate
 	 * meta boxes for cars post type. Possible required for others.
-	 * *
-	 *
-	 * @param $post
 	 */
 	public function register_meta_box() {
 
@@ -103,11 +100,12 @@ class Car_Post_Type {
 	 * Function to change some of the default text in the custom post type admin edit screen
 	 *
 	 * @param $translation
-	 * @param null $original
 	 *
 	 * @return string|void
+	 * @internal param null $original
+	 *
 	 */
-	public function change_text( $translation, $original = null ) {
+	public function change_text( $translation ) {
 
 		if ( 'Author' == $translation) {
 			return __( 'Sales Person' );
@@ -139,6 +137,10 @@ class Car_Post_Type {
 		echo '<p>' . __('Enter a unique stock number for this vehicle', AUTO) . '</p>';
 		$stock_no = isset( $value['stock_no'] ) ? esc_attr( $value['stock_no']) : '';
 		echo '<input type="text" id="stock_no" name="stock_no" value="' . $stock_no . '">';
+
+		echo '<p>' . __('You can optionally add a sub title here') . '</p>';
+		$sub_title = isset( $value['sub_title'] ) ? esc_attr( $value['sub_title'] ) : '';
+		echo '<input type="text" id="sub_title" name="sub_title" value="' . $sub_title . '">';
 
 		echo '<p>' . __('Enter the VIN for this vehicle', AUTO) . '</p>';
 		$vin = isset( $value['vin'] ) ? esc_attr( $value['vin']) : '';
@@ -184,6 +186,7 @@ class Car_Post_Type {
 		$data = array();
 
 		$data['stock_no'] = sanitize_text_field( $_POST['stock_no'] );
+		$data['sub_title'] = sanitize_text_field( $_POST['sub_title'] );
 		$data['vin'] = sanitize_text_field( $_POST['vin'] );
 
 		$data['chassis'] = sanitize_text_field( $_POST['chassis'] );
