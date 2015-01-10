@@ -160,8 +160,6 @@ class Car_Post_Type {
 		$chassis = isset( $value['chassis'] ) ? esc_attr( $value['chassis']) : '';
 		echo '<input type="text" id="chassis" name="chassis" value="'. $chassis .'">';
 
-
-		$years = array();
 		// lets use the oop way
 
 		// check to see if we have latest year
@@ -178,7 +176,8 @@ class Car_Post_Type {
 
 		echo '<p>' . __('Select vehicle year', AUTO ). '</p>';
 		echo '<select name="vehicle_year" id="vehicle_year">';
-			for ( $latest_year; $latest_year >= $earliest_year; $latest_year-- ) {
+		/** @noinspection PhpExpressionResultUnusedInspection */
+		for ( $latest_year; $latest_year >= $earliest_year; $latest_year-- ) {
 				echo '<option value="'. $latest_year . '" ' . selected( $value['vehicle_year'], $latest_year ) . '>' . $latest_year . '</option>';
 			}
 		echo '</select>';
