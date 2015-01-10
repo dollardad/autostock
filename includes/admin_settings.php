@@ -7,7 +7,8 @@ use Autostock\AdminSettings;
 class Admin_Settings {
 
 	/**
-	 * @var $options Holds the values to be used in the fields callbacks
+	 * options Holds the values to be used in the fields callbacks
+	 * @var
 	 */
 	private $options;
 
@@ -95,7 +96,8 @@ class Admin_Settings {
 		echo 'end year stuff will go here';
 	}
 
-	public function sanitize_car_details_fields( $input ) {
+	public function sanitize_car_details_fields( /** @noinspection PhpUnusedParameterInspection */
+		$input ) {
 
 		$new_input = array();
 
