@@ -9,7 +9,14 @@ use Autostock\CarPostType;
 
 class Car_Post_Type {
 
+	/**
+	 * Admin options
+	 * @var
+	 */
+	private $options;
 	private $screen;
+
+
 
 
 	/**
@@ -23,6 +30,7 @@ class Car_Post_Type {
 		add_action( 'admin_head', array( $this, 'remove_media_button' ) );
 		add_filter( 'gettext', array( $this, 'change_text' ) );
 		add_action( 'save_post', array( $this, 'vehicle_details_save_meta_box' ) );
+
 	}
 
 	/**
@@ -73,6 +81,8 @@ class Car_Post_Type {
 	 * meta boxes for cars post type. Possible required for others.
 	 */
 	public function register_meta_box() {
+		// Options set in admin page
+		$this->options = get_option( 'car_details_options' );
 
 		add_meta_box(
 			'stock_number_meta_box',
@@ -150,6 +160,35 @@ class Car_Post_Type {
 		$chassis = isset( $value['chassis'] ) ? esc_attr( $value['chassis']) : '';
 		echo '<input type="text" id="chassis" name="chassis" value="'. $chassis .'">';
 
+
+		$years = array();
+		// lets use the oop way
+
+		// check to see if we have latest year
+		if ( $this->options['latest_year'] ) {
+			$latest_year = esc_attr( $this->options['latest_year'] );
+		} else {
+			$latest_year = (new \DateTime())->format('Y');
+		}
+		if ( $this->options['earliest_year'] ) {
+			$earliest_year = esc_attr( $this->options['earliest_year'] );
+		} else {
+			$earliest_year = $latest_year - 20;
+		}
+
+		echo '<p>' . __('Select vehicle year', AUTO ). '</p>';
+		echo '<select name="vehicle_year" id="vehicle_year">';
+			for ( $latest_year; $latest_year >= $earliest_year; $latest_year-- ) {
+				echo '<option value="'. $latest_year . '" ' . selected( $value['vehicle_year'], $latest_year ) . '>' . $latest_year . '</option>';
+			}
+		echo '</select>';
+
+		$odometer = isset($options['odometer']) ? $options['odometer'] : 'kilometres';
+
+		echo '<p>' . __( ucfirst($odometer), AUTO ) . '</p>';
+		$odometer = isset( $value['odometer'] ) ? esc_attr( $value['odometer']) : '';
+		echo '<input type="text" name="odometer" id="odometer" value="' . $odometer . '" >';
+
 	}
 
 
@@ -190,6 +229,8 @@ class Car_Post_Type {
 		$data['vin'] = sanitize_text_field( $_POST['vin'] );
 
 		$data['chassis'] = sanitize_text_field( $_POST['chassis'] );
+		$data['vehicle_year'] = sanitize_text_field( $_POST['vehicle_year'] );
+		$data['odometer'] = sanitize_text_field( $_POST['odometer'] );
 		
 		// if the data array is not empty then save the meta data array.
 		if ( ! empty( $data ) ) {
