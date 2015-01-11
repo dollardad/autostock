@@ -16,6 +16,7 @@ class Admin_Settings {
 		// add the admin menu page
 		add_action( 'admin_menu', array( $this, 'autostock_admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'add_car_details_general_settings_section' ) );
+		add_action( 'admin_notices', array( $this, 'show_admin_notices' ) );
 	}
 
 	public function autostock_admin_menu() {
@@ -53,7 +54,8 @@ class Admin_Settings {
 		register_setting(
 			'car_details_group',
 			'car_details_options',
-			array( $this, 'sanitize_car_details_fields')
+			array( $this, 'sanitize_car_details_fields'),
+			$_POST
 		);
 
 		add_settings_section(
@@ -63,12 +65,6 @@ class Admin_Settings {
 			'autostock_admin_settings' // admin page slug
 		);
 
-		add_settings_section(
-			'car_general_settings_section', // section id
-			__( 'Settings for car details', AUTO ),
-			array( $this, 'car_details_general_options_callback'),
-			'autostock_admin_settings' // admin page slug
-		);
 
 		add_settings_field(
 			'vehicle_year_options',
@@ -90,6 +86,9 @@ class Admin_Settings {
 
 	public function car_details_general_options_callback() {
 		echo '<p>' . __( 'Use this section for setting options when adding or editing a vehicle item', AUTO ) . '</p>';
+		echo '<pre>';
+		print_r($this->options);
+		echo '</pre>';
 	}
 
 
@@ -97,13 +96,15 @@ class Admin_Settings {
 		?>
 		<p>
 			<label for="earliest_year"><?php echo __( 'Earliest vehicle year you stock', AUTO );?></label>
-			<input type="text" name="earliest_year" id="earliest_year" value="<?php echo $this->options['earliest_year']; ?>">
-			<span class="description">(<?php echo __('Leave blank for default, which is 20 years', AUTO ); ?>)</span>
+			<?php $earliest_year = isset( $this->options['earliest_year'] ) ? esc_attr( $this->options['earliest_year']) : '';?>
+			<input type="text" name="earliest_year" id="earliest_year" value="<?php echo $earliest_year; ?>">
+			<br><span class="description">(<?php echo __('Leave blank for default, which is 20 years', AUTO ); ?>)</span>
 		</p>
 		<p>
 			<label for="latest_year"><?php echo __( 'Latest vehicle year you stock', AUTO );?></label>
-			<input type="text" name="latest_year" id="latest_year" value="<?php echo $this->options['latest_year']; ?>">
-			<span class="description">(<?php echo __('Leave blank for default, which is this year', AUTO ); ?>)</span>
+			<?php $latest_year = isset( $this->options['latest_year'] ) ? esc_attr( $this->options['latest_year']) : '';?>
+			<input type="text" name="latest_year" id="latest_year" value="<?php echo $latest_year; ?>">
+			<br><span class="description">(<?php echo __('Leave blank for default, which is this year', AUTO ); ?>)</span>
 		</p>
 
 		<?php
@@ -112,13 +113,14 @@ class Admin_Settings {
 	public function odometer_display_option_callback() {
 		?>
 		<p>
+
 			<label title="mileage">
-				<input type="radio" name="odometer[]" value"mileage" <?php checked( $this->options['odometer'], 'mileage' ); ?> >
+				<input type="radio" name="odometer[]" value="mileage" <?php checked( $this->options['odometer'][0], 'mileage' ); ?> >
 				<span><?php echo __( 'Mileage', AUTO );?></span>
 			</label>
 			<br>
 			<label title="kilometres">
-				<input type="radio" name="odometer[]" value="kilometres" <?php checked( $this->options['odometer'], 'kilometres'); ?> >
+				<input type="radio" name="odometer[]" value="kilometres" <?php checked( $this->options['odometer'][0], 'kilometres'); ?> >
 				<span><?php echo __( 'Kilometres', AUTO );?></span>
 			</label>
 		</p>
@@ -126,12 +128,44 @@ class Admin_Settings {
 	}
 
 
-	public function sanitize_car_details_fields( /** @noinspection PhpUnusedParameterInspection */
-		$input ) {
+	public function sanitize_car_details_fields( $input ) {
 
-		$new_input = array();
 
-		return $new_input;
+
+		if ( empty( $input) ) {
+			$input = $_POST;
+		}
+		// Earliest year input field
+		if ( isset( $input['earliest_year']) && null !=  $input['earliest_year'] )  {
+			if ( ! is_numeric( $input['earliest_year'] ) ) {
+				$input['earliest_year'] = '';
+				add_settings_error( 'vehicle_details', 'earliest_year', __( 'Earliest year must be a 4 digit number', AUTO ), 'error');
+			}
+			if ( is_numeric( $input['earliest_year'] ) && ! preg_match( '/\d{4}/', $input['earliest_year'] ) ) {
+				$input['earliest_year'] = '';
+				add_settings_error( 'vehicle_details', 'earliest_year', __( 'Earliest year must be a 4 digit number, ie 1997', AUTO ), 'error');
+			}
+		}
+
+		// Latest year input field
+		if ( isset( $input['latest_year']) && null !=  $input['latest_year'] )  {
+			if ( ! is_numeric( $input['latest_year'] ) ) {
+				$input['latest_year'] = '';
+				add_settings_error( 'vehicle_details', 'latest_year', __( 'Latest year must be a 4 digit number, ie 2007', AUTO ), 'error');
+			}
+			if ( is_numeric( $input['latest_year'] ) && ! preg_match( '/\d{4}/', $input['latest_year'] ) ) {
+				$input['latest_year'] = '';
+				add_settings_error( 'vehicle_details', 'latest_year', __( 'Latest year must be a 4 digit number, ie 2007', AUTO ), 'error');
+			}
+		}
+
+
+
+		return $input;
+	}
+
+	public function show_admin_notices() {
+		settings_errors('vehicle_details');
 	}
 
 

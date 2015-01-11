@@ -174,7 +174,7 @@ class Car_Post_Type {
 			$earliest_year = $latest_year - 20;
 		}
 
-		echo '<p>' . __('Select vehicle year', AUTO ). '</p>';
+		echo '<p>' . __('Select vehicle year', AUTO ).'</p>';
 		echo '<select name="vehicle_year" id="vehicle_year">';
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		for ( $latest_year; $latest_year >= $earliest_year; $latest_year-- ) {
@@ -182,9 +182,9 @@ class Car_Post_Type {
 			}
 		echo '</select>';
 
-		$odometer = isset($options['odometer']) ? $options['odometer'] : 'kilometres';
+		$odometer_type = isset($this->options['odometer'][0]) ? esc_attr($this->options['odometer'][0]) : 'kilometres';
 
-		echo '<p>' . __( ucfirst($odometer), AUTO ) . '</p>';
+		echo '<p>' . __( ucfirst($odometer_type), AUTO ) .  __( ' (use only digits)', AUTO ) . '</p>';
 		$odometer = isset( $value['odometer'] ) ? esc_attr( $value['odometer']) : '';
 		echo '<input type="text" name="odometer" id="odometer" value="' . $odometer . '" >';
 
@@ -229,7 +229,7 @@ class Car_Post_Type {
 
 		$data['chassis'] = sanitize_text_field( $_POST['chassis'] );
 		$data['vehicle_year'] = sanitize_text_field( $_POST['vehicle_year'] );
-		$data['odometer'] = sanitize_text_field( $_POST['odometer'] );
+		$data['odometer'] = preg_replace('/\D/', '', $_POST['odometer'] );
 		
 		// if the data array is not empty then save the meta data array.
 		if ( ! empty( $data ) ) {
