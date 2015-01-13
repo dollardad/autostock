@@ -4,7 +4,7 @@ Donate link: http://kevinphillips.co.nz/plugin-support/
 Tags:  auto dealer, automotive, car dealer, car lots, car sales
 Requires at least: 4.1
 Tested up to: 4.1
-Stable tag: 1.0.2
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl.html
 
