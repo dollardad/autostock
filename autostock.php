@@ -3,7 +3,7 @@
 	 * Plugin Name: Autostock
 	 * Plugin URI: http://kevinphillips.co.nz
 	 * Description: Car dealer stock management plugin for WordPress.
-	 * Version: 1.0.1
+	 * Version: 1.0.2
 	 * Author: Kevin Phillips
 	 * Author URI: http://kevinphillips.co.nz
 	 * Text Domain: autostock
@@ -55,3 +55,19 @@ function load_includes() {
     }
 }
 add_action( 'init', __NAMESPACE__ .'\load_includes' );
+
+/**
+ * Function to display settings link in the display all plugins admin page
+ * Not sure why I cannot get this function to work inside the class
+ *
+ * @param $links
+ *
+ * @return array
+ */
+function add_action_links( $links ) {
+
+    $links[] = '<a href="' . get_admin_url( null, 'admin.php?page=autostock_admin_settings') . '">' . __( 'Settings', AUTO ) . '</a>';
+
+    return $links;
+}
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), __NAMESPACE__ . '\add_action_links' );
