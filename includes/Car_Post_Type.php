@@ -26,7 +26,6 @@ class Car_Post_Type {
 		$this->register_taxonomies();
 		add_filter( 'enter_title_here', array( $this, 'change_title_input' ) );
 		add_action( 'edit_form_after_title', array( $this, 'reorder_meta_box' ) );
-		add_action( 'admin_head', array( $this, 'remove_media_button' ) );
 		add_filter( 'gettext', array( $this, 'change_text' ) );
 		add_action( 'save_post', array( $this, 'vehicle_details_save_meta_box' ) );
 		add_action( 'add_meta_boxes', array( $this, 'replace_features_meta_box' ) );
@@ -69,7 +68,7 @@ class Car_Post_Type {
 			'menu_position'        => 2,
 			'menu_icon'            => 'dashicons-backup',
 			'hierarchical'         => false,
-			'supports'             => array( 'title', 'author', 'excerpt', 'editor' ),
+			'supports'             => array( 'title', 'author', 'excerpt', 'editor', 'thumbnail' ),
 			'register_meta_box_cb' => array( $this, 'register_meta_box' ),
 			'has_archive'          => true,
 		);
@@ -130,7 +129,7 @@ class Car_Post_Type {
 			'not_found'         => __( 'Car feature not found', AUTO )
 		);
 		$args   = array(
-			'hierarchical'      => false,
+			'hierarchical'      => true,
 			'labels'            => $labels,
 			'show_ui'           => true,
 			'show_admin_column' => false,
@@ -140,6 +139,37 @@ class Car_Post_Type {
 		);
 		register_taxonomy(
 			'car_features',
+			'cars',
+			$args
+		);
+
+		// Car Types
+		$labels = array(
+			'name'              => _x( 'Car Types', 'taxonomy general name', AUTO ),
+			'singular'          => _x( 'Car Type', 'taxonomy singular name', AUTO ),
+			'search_items'      => __( 'Search Car Type ', AUTO ),
+			'all_items'         => __( 'All Car Types', AUTO ),
+			'parent_item'       => __( 'Parent Car Type', AUTO ),
+			'parent_item_colon' => __( 'Parent Car Type', AUTO ),
+			'edit_item'         => __( 'Edit Car Type', AUTO ),
+			'update_item'       => __( 'Update Car Type', AUTO ),
+			'add_new_item'      => __( 'Add New Car Type', AUTO ),
+			'new_item_name'     => __( 'New Car Type', AUTO ),
+			'menu_name'         => __( 'Car Types', AUTO ),
+			'popular_items'     => __( 'Popular Car Types', AUTO ),
+			'not_found'         => __( 'Car type not found', AUTO )
+		);
+		$args   = array(
+			'hierarchical'      => false,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => false,
+			'query_var'         => true,
+			'rewrite'           => array( 'slug', 'car_types' ),
+			'show_cloud'        => true,
+		);
+		register_taxonomy(
+			'car_types',
 			'cars',
 			$args
 		);
@@ -162,12 +192,11 @@ class Car_Post_Type {
 			'high'
 		);
 
-
 	}
 
 	public function replace_features_meta_box() {
 		// Remove the default meta box for the features categories
-		remove_meta_box( 'tagsdiv-car_features', 'cars', 'side');
+		remove_meta_box( 'car_featuresdiv', 'cars', 'side');
 		add_meta_box(
 			'car_features_taxonomy',
 			__( 'Car Features', AUTO),
@@ -176,6 +205,9 @@ class Car_Post_Type {
 			'car_meta_box_position',
 			'core'
 		);
+
+		// Remove the default meta box for car types
+		remove_meta_box( 'tagsdiv-car_types', 'cars', 'side');
 	}
 
 	/**
@@ -184,6 +216,7 @@ class Car_Post_Type {
 	public function reorder_meta_box() {
 
 		global $post, $wp_meta_boxes;
+
 		do_meta_boxes( get_current_screen(), 'car_meta_box_position', $post );
 
 		unset( $wp_meta_boxes['cars']['car_meta_box_position'] );
@@ -272,29 +305,48 @@ class Car_Post_Type {
 		$odometer = isset( $value['odometer'] ) ? esc_attr( $value['odometer'] ) : '';
 		echo '<input type="text" name="odometer" id="odometer" value="' . $odometer . '" >';
 
+		echo '<p>' . __( 'Vehicle Type', AUTO ) . '</p>';
+		echo '<input type="hidden" name="tax_input[car_types][]" value="0">';
+		$selected_array = wp_get_post_terms( $post->ID, 'car_types');
+
+		if ( empty( $selected_array ) ) {
+			$selected = '';
+		} else {
+			// We know this can only be one so let's just drill down the array
+			$selected = $selected_array[0]->term_id;
+		}
+
+			$args = array(
+			'show_option_none' => 'Please select',
+			'taxonomy' => 'car_types',
+			'hide_empty' => 0,
+			'name' => 'car_types',
+			'id' => 'car_types'
+		);
+		wp_dropdown_categories( $args );
+
 	}
 
 	public function car_features_render_box_callback( $post ) {
 		$taxonomy = 'car_features';
-		$tax = get_taxonomy( $taxonomy );
+		$tax = get_taxonomy( $taxonomy);
 		$selected = wp_get_object_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
 		?>
 
 		<div id="taxonomy-<?php echo $taxonomy;?>" class="categorydiv">
 			<input type="hidden" name="tax_input[<?php echo $taxonomy;?>][]" value="0">
-
-			<ul id="<?php echo $taxonomy;?>checklist" class="list:<?php echo $taxonomy; ?> categorychecklist form-no-clear">
+			<ul id="<?php echo $taxonomy;?>checklist" data-wp-lists="lists:<?php echo $taxonomy;?> class="categorychecklist form-no-clear">
 				<?php
 				wp_terms_checklist( $post->ID, array(
 					'taxonomy' => $taxonomy,
 					'selected_cats' => $selected,
-					'checked_ontop' => false
+					'checked_ontop' => false,
 				) );
 				?>
 			</ul>
 
 		</div>
-		<?php
+	<?php
 
 	}
 
@@ -304,6 +356,8 @@ class Car_Post_Type {
 	 * @param $post_id
 	 */
 	public function vehicle_details_save_meta_box( $post_id ) {
+
+
 
 		// Check nonce is set
 		if ( ! isset( $_POST['vehicle_details_nonce'] ) ) {
@@ -344,6 +398,10 @@ class Car_Post_Type {
 			update_post_meta( $post_id, '_vehicle_details', $data );
 		}
 
+		if ( isset( $_POST['car_types'] ) ) {
+			wp_set_post_terms( $post_id, array( (int)$_POST['car_types'] ), 'car_types', false );
+		}
+
 	}
 
 
@@ -363,20 +421,9 @@ class Car_Post_Type {
 		return $title;
 	}
 
-	/**
-	 * Function to remove add media button on the editor
-	 */
-	public function remove_media_button() {
-		global $post;
-
-		if ( isset( $post ) && 'cars' == $post->post_type ) {
-			remove_action( 'media_buttons', 'media_buttons' );
-		}
-	}
-
 	public function enqueue_admin_scripts() {
 		wp_register_style( 'autostock_admin_css', plugins_url('css/autostock_admin.css', dirname( __FILE__ ) ) );
-
+		wp_enqueue_script('autostockjs', plugin_dir_url( dirname(__FILE__) ). '/js/autostock.js' );
 		wp_enqueue_style( 'autostock_admin_css');
 	}
 

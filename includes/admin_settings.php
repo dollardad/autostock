@@ -130,6 +130,14 @@ class Admin_Settings {
 			'car_features_settings_section'
 		);
 
+		add_settings_field(
+			'add_default_car_types',
+			'Add Default Car Types',
+			array( $this, 'add_default_car_types_callback' ),
+			'car_features_setting',
+			'car_features_settings_section'
+		);
+
 	}
 
 	/**
@@ -270,13 +278,37 @@ class Admin_Settings {
 	 * Callback function for the checkbox to add default car features
 	 */
 	public function add_default_car_features_callback() {
-
-		$checked = isset( $this->car_features_options['add_default_features'] );
-		echo '<input type="checkbox" name="add_default_features" value="1"' . checked( $checked, 1, false ) .'>';
-		echo '<label>' . __( 'Select to install default vehicle features', AUTO) . '</label>';
+		
+		echo '<pre>';
+		print_r($this->car_features_options);
+		echo '</pre>';
+		if ( isset( $this->car_features_options['add_default_features'] ) && $this->car_features_options['add_default_features'] == 1 ) {
+			echo '<input type="hidden" name="add_default_features" value="1">';
+			echo '<label>' . __( 'Default vehicle features have already been saved', AUTO ) . '</label>';
+			echo '<input type="hidden" name="default_features_installed" value="1">';
+		} else {
+			echo '<input type="checkbox" name="add_default_features" value="1">';
+			echo '<label>' . __( 'Select to install default vehicle features', AUTO ) . '</label>';
+			echo '<input type="hidden" name="default_features_installed" value="0">';
+		}
 
 
 	}
+
+	public function add_default_car_types_callback() {
+
+		if ( isset( $this->car_features_options['add_default_car_types'] ) && $this->car_features_options['add_default_car_types'] == 1  ) {
+			echo '<input type="hidden" name="add_default_car_types" value="1">';
+			echo '<label>' . __( 'Default car types have already been installed', AUTO) . '</label>';
+			echo '<input type="hidden" name="default_car_types_installed" value="1">';
+		} else {
+			echo '<input type="checkbox" name="add_default_car_types" value="1">';
+			echo '<label>' . __( 'Select to install default car types', AUTO) . '</label>';
+			echo '<input type="hidden" name="default_car_types_installed" value="0">';
+		}
+
+	}
+
 
 	/**
 	 * Callback to the checkbox that will add features
@@ -291,9 +323,7 @@ class Admin_Settings {
 
 			$input['add_default_features'] = 1;
 
-			if ( isset($this->car_features_options['add_default_features']) ) {
-				// do nothing as it has already been loaded
-			} else {
+			if ( $_POST['default_features_installed'] == 0 ){
 				// We now need to load the file with the default values
 				$features = $this->array_default_features();
 				foreach ( $features as $feature ) {
@@ -301,10 +331,27 @@ class Admin_Settings {
 					wp_insert_term( $feature[0], $feature[1], $feature[2] );
 
 				}
+
+				add_settings_error( 'vehicle_details', 'add_default_features', __( 'Features list has been updated to include defaults.', AUTO ), 'updated');
 			}
-			add_settings_error( 'vehicle_details', 'add_default_features', __( 'Features list has been updated to include defaults.', AUTO ), 'updated');
 
 		}
+
+		if ( isset ( $_POST['add_default_car_types'] ) && 1 == $_POST['add_default_car_types'] ) {
+
+			$input['add_default_car_types'] = 1;
+
+			if ( $_POST['default_car_types_install'] == 0 ) {
+				// We should now install the default car types
+				$car_types = $this->array_default_car_types();
+				foreach ( $car_types as $car_type ) {
+					wp_insert_term( $car_type[0], $car_type[1], $car_type[2] );
+				}
+				add_settings_error( 'vehicle_details', 'add_default_car_types', __( 'Car type list has been updated to include defaults.', AUTO ), 'updated');
+			}
+
+		}
+
 
 		return $input;
 	}
@@ -316,6 +363,7 @@ class Admin_Settings {
 	public function show_admin_notices() {
 		settings_errors('vehicle_details');
 	}
+
 
 	/**
 	 * Private function to hold array of car features
@@ -400,5 +448,22 @@ class Admin_Settings {
 		return $features;
 	}
 
+	private function array_default_car_types() {
+		$car_types = array(
+			array( 'Classic', 'car_types', array( 'slug' => 'classic' ) ),
+			array( 'Coach', 'car_types', array( 'slug' => 'coach' ) ),
+			array( 'Convertible', 'car_types', array( 'slug' => 'convertible' ) ),
+			array( 'Coupe', 'car_types', array( 'slug' => 'coupe' ) ),
+			array( 'Hatchback', 'car_types', array( 'slug' => 'hatchback' ) ),
+			array( 'RV-SUV', 'car_types', array( 'slug' => 'rv-suv' ) ),
+			array( 'Sedan', 'car_types', array( 'slug' => 'sedan' ) ),
+			array( 'Station Wagon', 'car_types', array( 'slug' => 'station-wagon' ) ),
+			array( 'Ute', 'car_types', array( 'slug' => 'ute' ) ),
+			array( 'Van', 'car_types', array( 'slug' => 'van' ) ),
+		);
+
+		return $car_types;
+
+	}
 }
 new Admin_Settings();
