@@ -1,4 +1,6 @@
 autostock
 =========
 
-WordPress Car Dealer's Plugin
+WordPress Car Dealer's Plugin.
+
+Video section TODO
