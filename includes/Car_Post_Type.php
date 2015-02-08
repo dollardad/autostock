@@ -494,26 +494,27 @@ class Car_Post_Type {
 		// Sanitize data and put into an array.
 		$data = array();
 
-		$data['stock_no']  = sanitize_text_field( $_POST['stock_no'] );
-		$data['sub_title'] = sanitize_text_field( $_POST['sub_title'] );
-		$data['vin']       = sanitize_text_field( $_POST['vin'] );
+		$data['stock_no']  = isset( $_POST['stock_no'] ) ? sanitize_text_field( $_POST['stock_no'] ) : '';
+		$data['sub_title'] = isset( $_POST['sub_title'] ) ? sanitize_text_field( $_POST['sub_title'] ): '';
+		$data['vin']       = isset( $_POST['vin'] ) ? sanitize_text_field( $_POST['vin'] ) : '';
 
-		$data['chassis']        = sanitize_text_field( $_POST['chassis'] );
-		$data['vehicle_year']   = sanitize_text_field( $_POST['vehicle_year'] );
-		$data['odometer']       = preg_replace( '/\D/', '', $_POST['odometer'] );
+		$data['chassis']        = isset( $_POST['chassis'] ) ? sanitize_text_field( $_POST['chassis'] ) : '';
+		$data['vehicle_year']   = isset( $_POST['vehicle_year'] ) ? sanitize_text_field( $_POST['vehicle_year'] ) : '';
+		$data['odometer']       = isset( $_POST['odometer'] ) ? preg_replace( '/\D/', '', $_POST['odometer'] ) : '';
 		$data['stock_sold']     = isset( $_POST['stock_sold'] ) ? (int) $_POST['stock_sold'] : 0;
 		$data['featured_stock'] = isset( $_POST['featured_stock'] ) ? (int) $_POST['featured_stock'] : 0;
-		$data['rego']           = sanitize_text_field( ( $_POST['rego'] ) );
-		$data['plate']          = sanitize_text_field( $_POST['plate'] );
-		$data['engine']         = sanitize_email( $_POST['engine'] );
-		$data['drive']          = sanitize_email( $_POST['drive'] );
-		$data['fuel']           = sanitize_text_field( $_POST['fuel'] );
-		$data['seats']          = preg_replace( '/\D/', '', $_POST['seats'] );
-		$data['condition']      = sanitize_text_field( $_POST['condition'] );
-		$data['exterior']       = sanitize_text_field( $_POST['exterior'] );
-		$data['interior']       = sanitize_text_field( $_POST['interior'] );
-		$data['price']          = preg_replace( '/\D/', '', $_POST['price'] );
-		$data['sale']           = preg_replace( '/\D/', '', $_POST['sale'] );
+		$data['rego']           = isset( $_POST['rego'] ) ? sanitize_text_field( ( $_POST['rego'] ) ) : '';
+		$data['plate']          = isset( $_POST['plate'] ) ? sanitize_text_field( $_POST['plate'] ) : '';
+		$data['engine']         = isset( $_POST['engine'] ) ? sanitize_text_field( $_POST['engine'] ) : '';
+		$data['drive']          = isset( $_POST['drive'] ) ? sanitize_text_field( $_POST['drive'] ) : '';
+		$data['transmission']   = isset( $_POST['transmission'] ) ? sanitize_text_field( $_POST['transmission'] ) : '';
+		$data['fuel']           = isset( $_POST['fuel'] ) ? sanitize_text_field( $_POST['fuel'] ) : '';
+		$data['seats']          = isset( $_POST['seats'] ) ? preg_replace( '/\D/', '', $_POST['seats'] ) : '';
+		$data['condition']      = isset( $_POST['condition'] ) ? sanitize_text_field( $_POST['condition'] ) : '';
+		$data['exterior']       = isset( $_POST['exterior'] ) ? sanitize_text_field( $_POST['exterior'] ) : '';
+		$data['interior']       = isset( $_POST['interior'] ) ? sanitize_text_field( $_POST['interior'] ) : '';
+		$data['price']          = isset( $_POST['price'] ) ? preg_replace( '/\D/', '', $_POST['price'] ) : '';
+		$data['sale']           = isset( $_POST['sale'] ) ? preg_replace( '/\D/', '', $_POST['sale'] ) : '';
 
 		// if the data array is not empty then save the meta data array.
 		if ( ! empty( $data ) ) {

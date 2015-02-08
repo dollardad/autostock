@@ -3,7 +3,7 @@
 	 * Plugin Name: Autostock
 	 * Plugin URI: http://kevinphillips.co.nz
 	 * Description: Car dealer stock management plugin for WordPress.
-	 * Version: 1.0.2
+	 * Version: 1.0.3
 	 * Author: Kevin Phillips
 	 * Author URI: http://kevinphillips.co.nz
 	 * Text Domain: autostock
