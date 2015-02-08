@@ -25,21 +25,13 @@ I am using the built in WordPress Gallery to manage images for each vehicle and 
 
 If you feel this plugin is useful and you would like me to continue developing it please consider a small donation :-)
 
+This plugin is far from finished as I intend to add some additional features.
+
 Please contact me if you have any request or features that would be useful.
-
-***** NOTICE ******
-
-However you should note
-that this plugin will change dramatically over the next few weeks and some functions will change, therefore it is better
-not to use this on a production site until I remove this Notice.
-
-
-Please contact me directly for additional features ie "wish list".
 
 Latest builds ( unstable ) can be taken from my github account dollardad->autostock
 
 == Installation ==
-
 
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
@@ -65,8 +57,8 @@ With my demo site I amd using the built in WordPress gallery and I've added the 
 
 == Changelog ==
 
-1.0.3 Added Vehicle Details and Features category to post type
-1.0.2 Added custom car features to car post types as taxonomy with checkboxes.
-1.0.1 Added settings options and taxonomy for makes and models
+1.0.1. Added settings options and taxonomy for makes and models
+1.0.2. Added custom car features to car post types as taxonomy with checkboxes.
+1.0.3. Added Vehicle Details and Features category to post type
 
 == Upgrade Notice ==
