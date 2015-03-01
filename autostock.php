@@ -3,7 +3,7 @@
 	 * Plugin Name: Autostock
 	 * Plugin URI: http://kevinphillips.co.nz
 	 * Description: Car dealer stock management plugin for WordPress.
-	 * Version: 1.0.3
+	 * Version: 1.0.4
 	 * Author: Kevin Phillips
 	 * Author URI: http://kevinphillips.co.nz
 	 * Text Domain: autostock
@@ -38,7 +38,7 @@ define( 'PHP_MIN_VERSION', '5.3.6' );
  */
 function autostock_activation() {
 
-    if (version_compare(  PHP_MIN_VERSION, PHP_VERSION ) >= 0) {
+    if (version_compare(   PHP_VERSION, PHP_MIN_VERSION,  '<' ) ) {
         wp_die('Sorry your php version is ' . PHP_VERSION . ' and you need a minimum of ' . PHP_MIN_VERSION );
     }
 

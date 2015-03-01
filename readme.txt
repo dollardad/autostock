@@ -4,7 +4,7 @@ Donate link: http://kevinphillips.co.nz/plugin-support/
 Tags:  auto dealer, automotive, car dealer, car lots, car sales
 Requires at least: 4.1
 Tested up to: 4.1
-Stable tag: 1.0.2
+Stable tag: 1.0.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -57,8 +57,18 @@ With my demo site I amd using the built in WordPress gallery and I've added the 
 
 == Changelog ==
 
-1.0.1. Added settings options and taxonomy for makes and models
-1.0.2. Added custom car features to car post types as taxonomy with checkboxes.
-1.0.3. Added Vehicle Details and Features category to post type
+= 1.0.4 =
+* Added PHP compare to stop plugin being loaded into site with php less than 5.3.6
+
+= 1.0.3 =
+* Added Vehicle Details and Features category to post type
+
+= 1.0.2 =
+* Added custom car features to car post types as taxonomy with checkboxes.
+
+= 1.0.1 =
+* Added settings options and taxonomy for makes and models
+
+
 
 == Upgrade Notice ==
